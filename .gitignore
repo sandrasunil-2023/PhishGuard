@@ -1,0 +1,17 @@
+# Python environments and generated files
+.venv/
+__pycache__/
+*.py[cod]
+
+# Local configuration and secrets
+.env
+backend/.env
+
+# Generated model files can be recreated with train_model.py
+backend/phishguard_model.pkl
+
+# Editor and operating-system files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

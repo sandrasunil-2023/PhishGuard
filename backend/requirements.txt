@@ -1,0 +1,12 @@
+# Current releases support the included Python 3.14 virtual environment.
+fastapi>=0.115
+uvicorn[standard]>=0.32
+scikit-learn>=1.8
+numpy>=2.0
+pymongo>=4.10
+python-dotenv>=1.0
+pydantic>=2.10
+requests>=2.32
+python-multipart>=0.0.12
+tldextract>=5.1
+joblib>=1.4

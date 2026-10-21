@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PhishGuard — Phishing & Social Engineering Detector</title>
+  <meta name="description" content="PhishGuard uses AI and rule-based analysis to detect phishing URLs and social engineering messages. Protect yourself from online scams instantly." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- Animated background -->
+  <div class="bg-orbs" aria-hidden="true">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <!-- ── Header ── -->
+  <header class="header" id="header">
+    <div class="header-inner">
+      <a href="#" class="logo" id="logo-link">
+        <div class="logo-icon-wrap">🛡️</div>
+        <span class="logo-text">Phish<span class="logo-accent">Guard</span></span>
+      </a>
+      <nav class="header-nav" aria-label="Main navigation">
+        <a href="#scanner" class="nav-link" id="nav-scanner">Scanner</a>
+        <a href="#dashboard" class="nav-link" id="nav-dashboard">Dashboard</a>
+        <a href="#history" class="nav-link" id="nav-history">History</a>
+      </nav>
+      <div class="api-badge" id="api-status-indicator">
+        <span class="status-dot" id="status-dot"></span>
+        <span id="status-text">Connecting…</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!--  HERO + SCANNER                                        -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <section class="hero" id="scanner">
+      <div class="hero-content">
+        <div class="hero-badge" id="hero-badge">
+          <span class="badge-dot"></span>
+          AI-Powered Threat Detection
+        </div>
+        <h1 class="hero-title">
+          Detect Phishing & <br />
+          <span class="gradient-text">Social Engineering</span>
+        </h1>
+        <p class="hero-sub">
+          Paste a suspicious URL <em>or</em> email/message. PhishGuard instantly analyzes it for phishing indicators, brand impersonation, urgency tactics, and credential harvesting.
+        </p>
+      </div>
+
+      <!-- ── Main Scanner Card ── -->
+      <div class="scanner-card glass" id="scanner-card">
+
+        <!-- Tab switcher -->
+        <div class="tab-bar" role="tablist" id="tab-bar">
+          <button class="tab-btn active" id="tab-url" role="tab" aria-selected="true" aria-controls="panel-url">
+            <span class="tab-icon">🔗</span> Check URL
+          </button>
+          <button class="tab-btn" id="tab-msg" role="tab" aria-selected="false" aria-controls="panel-msg">
+            <span class="tab-icon">✉️</span> Check Message
+          </button>
+        </div>
+
+        <!-- ── URL Tab ── -->
+        <div class="tab-panel" id="panel-url" role="tabpanel" aria-labelledby="tab-url">
+          <p class="panel-hint">Paste a suspicious URL below. The ML model will extract 33 features and calculate a phishing risk score.</p>
+          <form class="input-form" id="url-form" autocomplete="off">
+            <div class="input-row">
+              <div class="text-input-wrap" id="url-input-group">
+                <span class="input-prefix-icon">🔗</span>
+                <input
+                  type="text"
+                  id="url-input"
+                  class="text-input mono"
+                  placeholder="https://suspicious-site.xyz/verify?account=..."
+                  aria-label="URL to scan"
+                  spellcheck="false"
+                  maxlength="2048"
+                />
+                <button type="button" id="url-clear-btn" class="inline-clear" aria-label="Clear" hidden>✕</button>
+              </div>
+              <button type="submit" class="action-btn" id="url-scan-btn">
+                <span class="btn-shine"></span>
+                <span>⚡ Scan URL</span>
+              </button>
+            </div>
+          </form>
+
+          <!-- Quick demo URLs -->
+          <div class="demo-row" id="url-demos">
+            <span class="demo-hint">Try:</span>
+            <button class="chip" data-url="https://www.google.com" id="demo-google">Google ✓</button>
+            <button class="chip chip-danger" data-url="http://paypal-secure-login.xyz/verify?user=victim" id="demo-paypal-phish">PayPal Phish ⚠</button>
+            <button class="chip chip-danger" data-url="http://192.168.1.1/login/paypal/verify" id="demo-ip-phish">IP Phish ⚠</button>
+            <button class="chip" data-url="https://github.com" id="demo-github">GitHub ✓</button>
+          </div>
+        </div>
+
+        <!-- ── Message Tab ── -->
+        <div class="tab-panel hidden" id="panel-msg" role="tabpanel" aria-labelledby="tab-msg">
+          <p class="panel-hint">Paste a suspicious email or SMS message. The rule-based engine checks for urgency, threats, credential requests, impersonation, and more.</p>
+          <form class="input-form" id="msg-form" autocomplete="off">
+            <textarea
+              id="msg-input"
+              class="msg-textarea"
+              rows="6"
+              placeholder="Dear Customer, your account has been SUSPENDED due to unusual activity! Click here immediately to verify: http://paypal-login.xyz/verify or your account will be permanently deleted within 24 hours."
+              aria-label="Message to analyze"
+              spellcheck="false"
+              maxlength="10000"
+            ></textarea>
+            <div class="msg-footer">
+              <span class="char-count" id="msg-char-count">0 / 10,000 chars</span>
+              <button type="submit" class="action-btn" id="msg-scan-btn">
+                <span class="btn-shine"></span>
+                <span>🔍 Analyze Message</span>
+              </button>
+            </div>
+          </form>
+
+          <!-- Demo messages -->
+          <div class="demo-row" id="msg-demos">
+            <span class="demo-hint">Try:</span>
+            <button class="chip chip-danger" id="demo-msg-phish1" data-msg="URGENT: Your PayPal account has been limited! You must verify your identity IMMEDIATELY or your account will be permanently suspended within 24 hours. Click here now: http://paypal-verify.xyz/confirm. Enter your password and card details to restore access.">PayPal Scam ⚠</button>
+            <button class="chip chip-danger" id="demo-msg-phish2" data-msg="Congratulations! You have been selected as our lucky winner for a FREE iPhone 15 Pro! Claim your prize NOW before it expires! Send your full name, address, date of birth and credit card number to claim@freeprize.tk. Limited time offer!!!">Prize Scam ⚠</button>
+            <button class="chip" id="demo-msg-legit" data-msg="Hi Sarah, just a reminder about our team meeting tomorrow at 2pm. I've shared the agenda doc on Google Drive. Let me know if you have any questions. Thanks!">Legit Message ✓</button>
+          </div>
+        </div>
+
+      </div><!-- /scanner-card -->
+
+      <!-- ── Result Area ── -->
+      <div class="result-area glass hidden" id="result-area" aria-live="polite">
+
+        <!-- URL Result -->
+        <div id="url-result" hidden>
+          <!-- Verdict -->
+          <div class="verdict-row" id="url-verdict-row">
+            <div class="verdict-icon" id="url-verdict-icon">?</div>
+            <div class="verdict-text">
+              <h2 id="url-verdict-label">–</h2>
+              <p class="verdict-url" id="url-verdict-url">–</p>
+            </div>
+            <div class="verdict-pill" id="url-verdict-pill">–</div>
+          </div>
+
+          <!-- Metrics -->
+          <div class="metrics-grid" id="url-metrics">
+
+            <div class="metric-box" id="url-gauge-box">
+              <div class="metric-label">Risk Score</div>
+              <div class="gauge-wrap" id="url-gauge-wrap">
+                <svg class="gauge-svg" viewBox="0 0 120 120" aria-hidden="true">
+                  <circle class="gauge-bg" cx="60" cy="60" r="50"/>
+                  <circle class="gauge-arc" id="url-gauge-arc" cx="60" cy="60" r="50"
+                    stroke-dasharray="314" stroke-dashoffset="314"/>
+                </svg>
+                <div class="gauge-inner">
+                  <span class="gauge-num" id="url-gauge-num">0</span>
+                  <span class="gauge-of">/100</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="metric-box" id="url-conf-box">
+              <div class="metric-label">Model Confidence</div>
+              <div class="conf-value" id="url-conf-val">–</div>
+              <div class="conf-track">
+                <div class="conf-fill" id="url-conf-fill"></div>
+              </div>
+              <div class="metric-note" id="url-conf-note">–</div>
+            </div>
+
+            <div class="metric-box" id="url-info-box">
+              <div class="metric-label">Scan Details</div>
+              <ul class="detail-list">
+                <li><span>Protocol</span><span id="url-protocol">–</span></li>
+                <li><span>HTTPS</span><span id="url-https">–</span></li>
+                <li><span>Scan ID</span><span id="url-scan-id">–</span></li>
+                <li><span>Cached</span><span id="url-cached">–</span></li>
+              </ul>
+            </div>
+
+          </div><!-- /metrics-grid -->
+
+          <!-- Indicators -->
+          <div class="section-block" id="url-indicators-block">
+            <h3 class="block-title">⚠️ Risk Indicators</h3>
+            <ul class="indicator-list" id="url-indicators-list"></ul>
+          </div>
+
+          <!-- Feature breakdown toggle -->
+          <div class="section-block" id="url-features-block">
+            <h3 class="block-title">
+              📊 Feature Analysis
+              <button class="toggle-link" id="url-features-toggle" aria-expanded="false">Show details</button>
+            </h3>
+            <div class="features-grid hidden" id="url-features-grid"></div>
+          </div>
+        </div><!-- /url-result -->
+
+        <!-- Message Result -->
+        <div id="msg-result" hidden>
+          <!-- Verdict -->
+          <div class="verdict-row" id="msg-verdict-row">
+            <div class="verdict-icon" id="msg-verdict-icon">?</div>
+            <div class="verdict-text">
+              <h2 id="msg-verdict-label">–</h2>
+              <p class="verdict-url" id="msg-verdict-preview">–</p>
+            </div>
+            <div class="verdict-pill" id="msg-verdict-pill">–</div>
+          </div>
+
+          <!-- Metrics -->
+          <div class="metrics-grid" id="msg-metrics">
+
+            <div class="metric-box" id="msg-gauge-box">
+              <div class="metric-label">Risk Score</div>
+              <div class="gauge-wrap" id="msg-gauge-wrap">
+                <svg class="gauge-svg" viewBox="0 0 120 120" aria-hidden="true">
+                  <circle class="gauge-bg" cx="60" cy="60" r="50"/>
+                  <circle class="gauge-arc" id="msg-gauge-arc" cx="60" cy="60" r="50"
+                    stroke-dasharray="314" stroke-dashoffset="314"/>
+                </svg>
+                <div class="gauge-inner">
+                  <span class="gauge-num" id="msg-gauge-num">0</span>
+                  <span class="gauge-of">/100</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="metric-box" id="msg-cats-box">
+              <div class="metric-label">Tactics Detected</div>
+              <div class="tactic-count" id="msg-tactic-count">0</div>
+              <div class="metric-note" id="msg-cats-note">manipulation categories</div>
+              <div class="tactic-pills" id="msg-tactic-pills"></div>
+            </div>
+
+            <div class="metric-box" id="msg-stats-box">
+              <div class="metric-label">Message Stats</div>
+              <ul class="detail-list">
+                <li><span>Word count</span><span id="msg-words">–</span></li>
+                <li><span>URLs found</span><span id="msg-urls">–</span></li>
+                <li><span>CAPS ratio</span><span id="msg-caps">–</span></li>
+                <li><span>Exclamations</span><span id="msg-excl">–</span></li>
+              </ul>
+            </div>
+
+          </div><!-- /metrics-grid -->
+
+          <!-- Warning signs -->
+          <div class="section-block" id="msg-warnings-block">
+            <h3 class="block-title">🚩 Warning Signs</h3>
+            <ul class="indicator-list" id="msg-warnings-list"></ul>
+          </div>
+
+        </div><!-- /msg-result -->
+
+      </div><!-- /result-area -->
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!--  DASHBOARD / STATS                                     -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <section class="section alt-section" id="dashboard">
+      <div class="section-inner">
+        <div class="section-head">
+          <h2 class="section-title">Detection Dashboard</h2>
+          <p class="section-sub">Real-time statistics from the PhishGuard database.</p>
+          <button class="ghost-btn" id="refresh-stats-btn">↻ Refresh</button>
+        </div>
+
+        <div class="stats-grid" id="stats-grid">
+          <!-- URL Stats -->
+          <div class="stat-card glass" id="sc-url-total">
+            <span class="stat-icon">🔗</span>
+            <span class="stat-num" id="s-url-total">–</span>
+            <span class="stat-lbl">URL Scans</span>
+          </div>
+          <div class="stat-card glass" id="sc-url-phish">
+            <span class="stat-icon">🎣</span>
+            <span class="stat-num danger" id="s-url-phish">–</span>
+            <span class="stat-lbl">Phishing URLs</span>
+          </div>
+          <div class="stat-card glass" id="sc-url-legit">
+            <span class="stat-icon">✅</span>
+            <span class="stat-num safe" id="s-url-legit">–</span>
+            <span class="stat-lbl">Legitimate URLs</span>
+          </div>
+          <div class="stat-card glass" id="sc-url-ratio">
+            <span class="stat-icon">📊</span>
+            <span class="stat-num" id="s-url-ratio">–</span>
+            <span class="stat-lbl">Phishing Rate</span>
+          </div>
+          <!-- Message Stats -->
+          <div class="stat-card glass" id="sc-msg-total">
+            <span class="stat-icon">✉️</span>
+            <span class="stat-num" id="s-msg-total">–</span>
+            <span class="stat-lbl">Message Scans</span>
+          </div>
+          <div class="stat-card glass" id="sc-msg-danger">
+            <span class="stat-icon">🚨</span>
+            <span class="stat-num danger" id="s-msg-danger">–</span>
+            <span class="stat-lbl">Dangerous Msgs</span>
+          </div>
+          <div class="stat-card glass" id="sc-msg-sus">
+            <span class="stat-icon">⚠️</span>
+            <span class="stat-num warn" id="s-msg-sus">–</span>
+            <span class="stat-lbl">Suspicious Msgs</span>
+          </div>
+          <div class="stat-card glass" id="sc-total">
+            <span class="stat-icon">🛡️</span>
+            <span class="stat-num" id="s-total">–</span>
+            <span class="stat-lbl">Total Analyzed</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!--  HISTORY                                               -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <section class="section" id="history">
+      <div class="section-inner">
+        <div class="section-head">
+          <h2 class="section-title">Scan History</h2>
+          <p class="section-sub">Recent URL and message scans from the database.</p>
+          <div class="history-btns">
+            <button class="ghost-btn" id="refresh-history-btn">↻ Refresh</button>
+            <button class="danger-ghost-btn" id="clear-history-btn">🗑️ Clear All</button>
+          </div>
+        </div>
+
+        <!-- History tab switcher -->
+        <div class="history-tabs" id="history-tabs">
+          <button class="h-tab active" id="h-tab-url" data-target="h-panel-url">URL Scans</button>
+          <button class="h-tab" id="h-tab-msg" data-target="h-panel-msg">Message Scans</button>
+        </div>
+
+        <!-- URL History -->
+        <div class="glass history-panel" id="h-panel-url">
+          <div class="table-wrap">
+            <table class="data-table" id="url-history-table" aria-label="URL scan history">
+              <thead>
+                <tr>
+                  <th>URL</th>
+                  <th>Verdict</th>
+                  <th>Risk</th>
+                  <th>Confidence</th>
+                  <th>Time</th>
+                </tr>
+              </thead>
+              <tbody id="url-history-body">
+                <tr><td colspan="5" class="empty-row">Loading…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Message History -->
+        <div class="glass history-panel hidden" id="h-panel-msg">
+          <div class="table-wrap">
+            <table class="data-table" id="msg-history-table" aria-label="Message scan history">
+              <thead>
+                <tr>
+                  <th>Message Preview</th>
+                  <th>Verdict</th>
+                  <th>Risk</th>
+                  <th>Tactics</th>
+                  <th>Time</th>
+                </tr>
+              </thead>
+              <tbody id="msg-history-body">
+                <tr><td colspan="5" class="empty-row">Loading…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!--  BULK URL SCAN                                         -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <section class="section alt-section" id="bulk-scan">
+      <div class="section-inner">
+        <div class="section-head">
+          <h2 class="section-title">Bulk URL Scanner</h2>
+          <p class="section-sub">Scan up to 20 URLs at once. One per line.</p>
+        </div>
+        <div class="glass bulk-card" id="bulk-card">
+          <textarea
+            id="bulk-input"
+            class="bulk-textarea"
+            rows="7"
+            placeholder="https://www.google.com&#10;http://paypal-secure.xyz/verify&#10;https://github.com"
+            aria-label="URLs for bulk scan"
+            spellcheck="false"
+          ></textarea>
+          <div class="bulk-footer">
+            <span id="bulk-count" class="bulk-count">0 URLs</span>
+            <button class="action-btn" id="bulk-scan-btn">
+              <span class="btn-shine"></span>
+              <span>🚀 Scan All</span>
+            </button>
+          </div>
+        </div>
+        <div class="bulk-results hidden" id="bulk-results">
+          <h3 class="result-heading" id="bulk-heading">Results</h3>
+          <div id="bulk-rows"></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer" id="footer">
+    <div class="footer-inner">
+      <span class="logo-text" style="font-size:1rem;">🛡️ Phish<span class="logo-accent">Guard</span></span>
+      <span class="footer-note">AI-powered phishing &amp; social engineering detection · FastAPI · scikit-learn · MongoDB</span>
+    </div>
+  </footer>
+
+  <!-- Toast container -->
+  <div id="toasts" aria-live="assertive"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
